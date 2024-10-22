@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blogger.App", "Blogger.App\Blogger.App.csproj", "{328BF436-C6B4-4B1C-BADC-586F5F1315E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blogger.Api", "Blogger.Api\Blogger.Api.csproj", "{EEA0511E-32DB-427B-9B67-B62E24F2D9D7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{328BF436-C6B4-4B1C-BADC-586F5F1315E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{328BF436-C6B4-4B1C-BADC-586F5F1315E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{328BF436-C6B4-4B1C-BADC-586F5F1315E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{328BF436-C6B4-4B1C-BADC-586F5F1315E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEA0511E-32DB-427B-9B67-B62E24F2D9D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEA0511E-32DB-427B-9B67-B62E24F2D9D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEA0511E-32DB-427B-9B67-B62E24F2D9D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEA0511E-32DB-427B-9B67-B62E24F2D9D7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
