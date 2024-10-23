@@ -1,4 +1,4 @@
-using Blogger.Contracts.Entities;
+using Blogger.Contracts.Data.Entities;
 using Blogger.Contracts.Enums;
 using Blogger.Contracts.Services;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

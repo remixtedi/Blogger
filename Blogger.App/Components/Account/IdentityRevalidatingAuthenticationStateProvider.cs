@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Blogger.Contracts.Entities;
+using Blogger.Contracts.Data.Entities;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;

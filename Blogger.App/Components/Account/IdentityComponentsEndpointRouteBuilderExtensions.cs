@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Blogger.App.Components.Account.Pages;
 using Blogger.App.Components.Account.Pages.Manage;
-using Blogger.Contracts.Entities;
+using Blogger.Contracts.Data.Entities;
 
 namespace Microsoft.AspNetCore.Routing;
 

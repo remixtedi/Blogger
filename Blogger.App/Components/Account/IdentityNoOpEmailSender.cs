@@ -1,4 +1,4 @@
-using Blogger.Contracts.Entities;
+using Blogger.Contracts.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 

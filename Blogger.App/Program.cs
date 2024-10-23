@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Blogger.App.Components;
 using Blogger.App.Components.Account;
-using Blogger.Contracts.Entities;
+using Blogger.Contracts.Data.Entities;
 using Blogger.Contracts.Services;
 using Blogger.Infrastructure.Services;
 using Blogger.Migrations;
@@ -23,6 +23,7 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserService, UserService>();
+
 
 builder.Services.AddAuthentication(options =>
     {
