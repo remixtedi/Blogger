@@ -5,6 +5,8 @@ using MudBlazor.Services;
 using Blogger.App.Components;
 using Blogger.App.Components.Account;
 using Blogger.Contracts.Entities;
+using Blogger.Contracts.Services;
+using Blogger.Infrastructure.Services;
 using Blogger.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -39,7 +42,6 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
         options.SignIn.RequireConfirmedAccount = true;
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequireUppercase = false;
-
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
@@ -50,6 +52,7 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 var app = builder.Build();
 
+// Run migrations
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
