@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Blogger.Contracts.Enums;
 
-namespace Blogger.Contracts.Entities;
+namespace Blogger.Contracts.Data.Entities;
 
 public abstract class BaseEntity
 {

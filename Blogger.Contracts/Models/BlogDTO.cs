@@ -1,6 +1,6 @@
-namespace Blogger.Contracts.Entities;
+namespace Blogger.Contracts.Models;
 
-public class Blog : AuditableEntity
+public class BlogDTO
 {
     public string Title { get; set; }
     public string Content { get; set; }

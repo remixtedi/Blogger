@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Blogger.Contracts\Blogger.Contracts.csproj" />
+      <ProjectReference Include="..\Blogger.Core\Blogger.Core.csproj" />
       <ProjectReference Include="..\Blogger.Infrastructure\Blogger.Infrastructure.csproj" />
     </ItemGroup>
 

@@ -1,5 +1,10 @@
+using Blogger.Contracts.Data;
 using Blogger.Contracts.Services;
+using Blogger.Core;
+using Blogger.Infrastructure.Data;
 using Blogger.Infrastructure.Services;
+using Blogger.Migrations;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +22,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBlogsService, BlogsService>();
+builder.Services.AddAutoMapper(automappper =>
+{
+    automappper.AddProfile<AutoMapperProfile>();
+});
 
 var app = builder.Build();
 
