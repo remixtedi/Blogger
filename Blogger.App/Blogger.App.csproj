@@ -1,9 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>aspnet-Blogger.App-9ee1e3b1-2162-40f8-895d-337ea41b705c</UserSecretsId>
     </PropertyGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.*"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="MudBlazor" Version="7.*"/>
+        <PackageReference Include="Extensions.MudBlazor.StaticInput" Version="2.*"/>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\Blogger.Infrastructure\Blogger.Infrastructure.csproj" />
+    </ItemGroup>
 
 </Project>

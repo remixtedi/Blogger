@@ -567,3 +567,6 @@ fabric.properties
 
 # Ignore whole .idea folder
 .idea/
+
+# Ignore database files
+/Blogger.Migrations/Data/*
