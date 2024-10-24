@@ -1,11 +1,13 @@
 using Blogger.Contracts.Enums;
 using Blogger.Contracts.Models;
 using Blogger.Contracts.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blogger.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class BlogsController(ILogger<BlogsController> logger, IBlogsService blogsService) : ControllerBase
 {

@@ -45,9 +45,17 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
         accountGroup.MapPost("/Logout", async (
             ClaimsPrincipal user,
             SignInManager<ApplicationUser> signInManager,
+            HttpContext context,
             [FromForm] string returnUrl) =>
         {
             await signInManager.SignOutAsync();
+            // Remove the auth token cookie
+            context.Response.Cookies.Delete("BloggerAuthToken", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            });
             return TypedResults.LocalRedirect($"~/{returnUrl}");
         });
 

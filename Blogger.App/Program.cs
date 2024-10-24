@@ -1,13 +1,17 @@
+using Blogger.App.ApiServices;
+using Blogger.App.Auth;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Blogger.App.Components;
 using Blogger.App.Components.Account;
+using Blogger.Contracts.Configs;
 using Blogger.Contracts.Data.Entities;
 using Blogger.Contracts.Services;
 using Blogger.Infrastructure.Services;
 using Blogger.Migrations;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,10 +23,14 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddCascadingAuthenticationState();
+// Add Identity services
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.Configure<JwtTokenConfig>(builder.Configuration.GetSection("JwtTokenConfig"))
+    .AddSingleton(x => x.GetRequiredService<IOptions<JwtTokenConfig>>().Value);
 
 
 builder.Services.AddAuthentication(options =>
@@ -31,6 +39,26 @@ builder.Services.AddAuthentication(options =>
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
+
+// Configure Identity Cookie settings
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    
+    // Set authentication ticket validity to 60 minutes
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.SlidingExpiration = false;
+    
+    // Configure paths
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    
+    // Optional: Customize cookie name and other settings if needed
+    options.Cookie.Name = "Blogger.Auth";
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -48,7 +76,13 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["ApiUrl"])});
+builder.Services.AddHttpClient<IBloggerApiService, BloggerApiService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiUrl"]);
+}).AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
+
+builder.Services.AddScoped<AuthenticatedHttpClientHandler>();
+    
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
