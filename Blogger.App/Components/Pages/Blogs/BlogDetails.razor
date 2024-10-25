@@ -1,28 +1,24 @@
-﻿@page "/"
+@page "/BlogDetails/{BlogId:int}"
 @using Blogger.App.ApiServices
 @using Blogger.App.Components.Blogs
 @using Blogger.Contracts.Models
 
 @inject IBloggerApiService BloggerApiService
 
-<PageTitle>Home</PageTitle>
+<PageTitle>@(Blog?.Title ?? "Loading")</PageTitle>
+
 
 <MudContainer MaxWidth="MaxWidth.Medium">
     <MudPaper Height="100%" Width="100%" Square="true" Class="pa-3" Elevation="0">
 
         @{
-            if (_blogs == null)
+            if (Blog == null)
             {
                 <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
             }
             else
             {
-                <MudStack Spacing="10">
-                    @foreach (var blog in _blogs)
-                    {
-                        <BlogPreview Blog="blog"></BlogPreview>
-                    }
-                </MudStack>
+                <BlogDetailed Blog="Blog"></BlogDetailed>
             }
         }
 
@@ -31,11 +27,12 @@
 
 
 @code {
-    private IEnumerable<BlogDTO>? _blogs;
+    [Parameter] public int BlogId { get; set; }
+    private BlogDTO Blog { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        _blogs = await BloggerApiService.GetBlogs();
+        Blog = await BloggerApiService.GetBlogById(BlogId);
     }
 
 }

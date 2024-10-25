@@ -16,7 +16,7 @@ public class BlogsService(ILogger<BlogsService> logger, IMapper mapper, IUnitOfW
         logger.LogInformation("Retrieving all blogs");
         try
         {
-            var blogs = await unitOfWork.Blogs.GetAllAsync();
+            var blogs = await unitOfWork.Blogs.GetAllAsync(predicate);
             logger.LogInformation("Retrieved all blogs");
             return blogs;
         }
@@ -55,7 +55,7 @@ public class BlogsService(ILogger<BlogsService> logger, IMapper mapper, IUnitOfW
         try
         {
             var entity = mapper.Map<Blog>(blog);
-            
+
             await unitOfWork.Blogs.AddAsync(entity);
             await unitOfWork.SaveChangesAsync();
             logger.LogInformation("Created new blog: {Title}", blog.Title);

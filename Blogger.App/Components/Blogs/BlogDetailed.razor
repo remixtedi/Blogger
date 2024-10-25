@@ -1,0 +1,16 @@
+@using Blogger.Contracts.Models
+<MudPaper Class="pa-3" Elevation="0">
+    <MudCard>
+        <MudCardMedia Image="https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2022/03/what-is-a-blog-1.png" Height="200"/>
+        <MudCardContent>
+            <MudText Typo="Typo.h5">@Blog.Title</MudText>
+            <MudText Typo="Typo.body2">@Blog.Content</MudText>
+            <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
+        </MudCardContent>
+    </MudCard>
+</MudPaper>
+
+
+@code {
+    [Parameter] public BlogDTO Blog { get; set; }
+}
