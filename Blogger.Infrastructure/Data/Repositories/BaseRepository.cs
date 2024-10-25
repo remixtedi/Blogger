@@ -7,7 +7,6 @@ namespace Blogger.Infrastructure.Data.Repositories;
 
 public class Repository<T> : IRepository<T> where T : class
 {
-    
     private readonly ApplicationDbContext _context;
     private protected readonly DbSet<T> DbSet;
 
@@ -16,15 +15,18 @@ public class Repository<T> : IRepository<T> where T : class
         _context = context;
         DbSet = _context.Set<T>();
     }
-    
+
     public async Task<IEnumerable<T>> GetAllAsync()
     {
         return await DbSet.ToListAsync();
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate)
+    public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate,
+        Expression<Func<T, object>> orderBy, bool orderByDescending = false)
     {
-        return await DbSet.Where(predicate).ToListAsync();
+        return orderByDescending
+            ? await DbSet.Where(predicate).OrderByDescending(orderBy).ToListAsync()
+            : await DbSet.Where(predicate).OrderBy(orderBy).ToListAsync();
     }
 
     public async Task<T> GetByIdAsync(int id)
