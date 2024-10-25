@@ -1,7 +1,8 @@
 ﻿@page "/"
 @using Blogger.App.ApiServices
 @using Blogger.App.Components.Blogs
-@using Blogger.Contracts.Models
+@using Blogger.Contracts.Models.Requests
+@using Blogger.Contracts.Models.Responses
 
 @inject IBloggerApiService BloggerApiService
 
@@ -11,18 +12,23 @@
     <MudPaper Height="100%" Width="100%" Square="true" Class="pa-3" Elevation="0">
 
         @{
-            if (_blogs == null)
+            if (filterBlogsResult == null)
             {
                 <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
             }
             else
             {
                 <MudStack Spacing="10">
-                    @foreach (var blog in _blogs)
+                    @foreach (var blog in filterBlogsResult.Blogs)
                     {
                         <BlogPreview Blog="blog"></BlogPreview>
                     }
                 </MudStack>
+                <MudPaper Class="mt-4" Elevation="0">
+                    <div class="d-flex flex-column align-center">
+                        <MudPagination SelectedChanged="PageChanged" Color="Color.Primary" Count="@((filterBlogsResult.TotalCount + filterBlogsResult.PageSize - 1) / filterBlogsResult.PageSize)"/>
+                    </div>
+                </MudPaper>
             }
         }
 
@@ -31,11 +37,31 @@
 
 
 @code {
-    private IEnumerable<BlogDTO>? _blogs;
+    private FilterBlogsResult? filterBlogsResult;
+    private int _page = 1;
+    private readonly int _pageSize = 3;
 
     protected override async Task OnInitializedAsync()
     {
-        _blogs = await BloggerApiService.GetBlogs();
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var filter = new FilterBlogsRequest
+        {
+            Page = _page,
+            PageSize = _pageSize
+        };
+
+        filterBlogsResult = await BloggerApiService.GetBlogs(filter);
+        _page = filterBlogsResult.Page;
+    }
+
+    private async Task PageChanged(int i)
+    {
+        _page = i;
+        await LoadData();
     }
 
 }

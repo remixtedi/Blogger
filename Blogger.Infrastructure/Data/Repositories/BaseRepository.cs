@@ -22,11 +22,11 @@ public class Repository<T> : IRepository<T> where T : class
     }
 
     public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate,
-        Expression<Func<T, object>> orderBy, bool orderByDescending = false)
+        Expression<Func<T, object>> orderBy, bool orderByDescending, int skipCount, int takeCount)
     {
-        return orderByDescending
-            ? await DbSet.Where(predicate).OrderByDescending(orderBy).ToListAsync()
-            : await DbSet.Where(predicate).OrderBy(orderBy).ToListAsync();
+        var query = DbSet.Where(predicate);
+        query = orderByDescending ? query.OrderByDescending(orderBy) : query.OrderBy(orderBy);
+        return await query.Skip(skipCount).Take(takeCount).ToListAsync();
     }
 
     public async Task<T> GetByIdAsync(int id)
@@ -55,5 +55,15 @@ public class Repository<T> : IRepository<T> where T : class
         var entity = await DbSet.FindAsync(id);
         if (entity == null) return;
         DbSet.Remove(entity);
+    }
+
+    public async Task<int> CountAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await DbSet.CountAsync(predicate);
+    }
+
+    public async Task<int> CountAsync()
+    {
+        return await DbSet.CountAsync();
     }
 }

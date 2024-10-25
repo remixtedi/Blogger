@@ -11,14 +11,15 @@ namespace Blogger.Infrastructure.Services;
 
 public class BlogsService(ILogger<BlogsService> logger, IMapper mapper, IUnitOfWork unitOfWork) : IBlogsService
 {
-    public async Task<IEnumerable<Blog>> GetBlogsAsync(Expression<Func<Blog, bool>> predicate)
+    public async Task<IEnumerable<BlogDTO>> GetBlogsAsync(Expression<Func<Blog, bool>> predicate, int skipCount,
+        int takeCount)
     {
         logger.LogInformation("Retrieving all blogs");
         try
         {
-            var blogs = await unitOfWork.Blogs.GetAllAsync(predicate, e => e.Created, true);
+            var blogs = await unitOfWork.Blogs.GetAllAsync(predicate, e => e.Created, true, skipCount, takeCount);
             logger.LogInformation("Retrieved all blogs");
-            return blogs;
+            return mapper.Map<IEnumerable<BlogDTO>>(blogs);
         }
         catch (Exception ex)
         {
@@ -136,6 +137,38 @@ public class BlogsService(ILogger<BlogsService> logger, IMapper mapper, IUnitOfW
         catch (Exception ex) when (ex.Message != "Blog not found")
         {
             logger.LogError(ex, "Error soft deleting blog with ID: {BlogId}", id);
+            throw;
+        }
+    }
+
+    public async Task<int> CountAsync(Expression<Func<Blog, bool>> predicate)
+    {
+        logger.LogInformation("Counting blogs");
+        try
+        {
+            var count = await unitOfWork.Blogs.CountAsync(predicate);
+            logger.LogInformation("Counted blogs: {Count}", count);
+            return count;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error counting blogs");
+            throw;
+        }
+    }
+
+    public async Task<int> CountAsync()
+    {
+        logger.LogInformation("Counting blogs");
+        try
+        {
+            var count = await unitOfWork.Blogs.CountAsync();
+            logger.LogInformation("Counted blogs: {Count}", count);
+            return count;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error counting blogs");
             throw;
         }
     }

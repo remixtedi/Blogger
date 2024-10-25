@@ -6,7 +6,7 @@
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     <AuthorizeView>
         <Authorized>
-            <MudNavLink Href="add" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Lock">Add Blog</MudNavLink>
+            <MudNavLink Href="add" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Add Blog</MudNavLink>
             <MudDivider></MudDivider>
             <MudNavLink Href="Account/Manage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">@context.User.Identity?.Name</MudNavLink>
             <form action="Account/Logout" method="post">

@@ -1,16 +1,14 @@
 @using Blogger.Contracts.Models
-<MudPaper Class="pa-3" Elevation="0">
-    <MudCard>
-        <MudCardMedia Image="https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2022/03/what-is-a-blog-1.png" Height="200"/>
-        <MudCardContent>
-            <MudText Typo="Typo.h5">@Blog.Title</MudText>
-            <MudText Typo="Typo.body2">@(Blog.Content.Length > 300 ? $"{Blog.Content.Substring(0, 300)}..." : Blog.Content)</MudText>
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton Href="@($"/BlogDetails/{Blog.Id}")" Variant="Variant.Text" Color="Color.Primary">See details</MudButton>
-        </MudCardActions>
-    </MudCard>
-</MudPaper>
+<MudCard>
+    <MudCardMedia Image="https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2022/03/what-is-a-blog-1.png" Height="200"/>
+    <MudCardContent>
+        <MudText Typo="Typo.h5">@Blog.Title</MudText>
+        <MudText Typo="Typo.body2">@(Blog.Content.Length > 300 ? $"{Blog.Content.Substring(0, 300)}..." : Blog.Content)</MudText>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Href="@($"/BlogDetails/{Blog.Id}")" Variant="Variant.Text" Color="Color.Primary">See details</MudButton>
+    </MudCardActions>
+</MudCard>
 
 
 @code {

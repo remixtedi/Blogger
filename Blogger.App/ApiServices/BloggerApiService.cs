@@ -1,47 +1,53 @@
 using System.Net;
 using Blogger.Contracts.Models;
+using Blogger.Contracts.Models.Requests;
+using Blogger.Contracts.Models.Responses;
 using Microsoft.AspNetCore.Components;
 
 namespace Blogger.App.ApiServices;
+
+public static class HttpExtensions
+{
+    public static string ObjectToQueryString(this object obj)
+    {
+        var properties = from p in obj.GetType().GetProperties()
+            where p.GetValue(obj, null) != null
+            select $"{Uri.EscapeDataString(p.Name)}={Uri.EscapeDataString(p.GetValue(obj, null).ToString())}";
+
+        return string.Join("&", properties);
+    }
+}
 
 public class BloggerApiService(
     ILogger<BloggerApiService> logger,
     NavigationManager navigationManager,
     HttpClient httpClient) : IBloggerApiService
 {
-    public async Task<IEnumerable<BlogDTO>> GetBlogs()
+    public async Task<FilterBlogsResult> GetBlogs(FilterBlogsRequest filterBlogsRequest)
     {
         try
         {
-            var response = await httpClient.GetAsync("blogs");
+            var response = await httpClient.GetAsync($"blogs?{filterBlogsRequest.ObjectToQueryString()}");
 
             logger.LogInformation($"Response status: {response.StatusCode}");
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
                 navigationManager.NavigateTo(
                     $"/Identity/Account/Login?returnUrl={Uri.EscapeDataString(navigationManager.Uri)}", true);
-                return Array.Empty<BlogDTO>();
-            }
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-                logger.LogError($"API error: {response.StatusCode}, Content: {content}");
-                throw new HttpRequestException($"API error: {response.StatusCode}");
-            }
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<FilterBlogsResult>()
+                       ?? new FilterBlogsResult();
 
-            return await response.Content.ReadFromJsonAsync<IEnumerable<BlogDTO>>()
-                   ?? Array.Empty<BlogDTO>();
+            var content = await response.Content.ReadAsStringAsync();
+            logger.LogError($"API error: {response.StatusCode}, Content: {content}");
+            throw new HttpRequestException($"API error: {response.StatusCode}");
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error fetching blogs");
             throw;
         }
-
-
-        return await httpClient.GetFromJsonAsync<IEnumerable<BlogDTO>>("blogs");
     }
 
     public async Task<BlogDTO> GetBlogById(int id)

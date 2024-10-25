@@ -5,6 +5,7 @@
 
 @inject IBloggerApiService BloggerApiService
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 
 @attribute [Authorize]
 
@@ -15,37 +16,26 @@
     <AuthorizeView Context="authContext">
         <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
             <DataAnnotationsValidator/>
-            <MudGrid>
-                <MudItem xs="12" sm="7">
-                    <MudCard>
-                        <MudCardContent>
-                            <MudTextField Label="Title" HelperText="Min. 8 characters"
-                                          @bind-Value="model.Title" For="@(() => model.Title)"/>
-                            <MudTextField Lines="10" Label="Content" Class="mt-3" HelperText="Min. 8 characters"
-                                          @bind-Value="model.Content" For="@(() => model.Content)"/>
-                        </MudCardContent>
-                        <MudCardActions>
-                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add</MudButton>
-                        </MudCardActions>
-                    </MudCard>
-                </MudItem>
-                <MudItem xs="12" sm="5">
-                    <MudPaper Class="pa-4 mud-height-full">
-                        <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
-                        @if (!success)
-                        {
-                            <MudText Color="@Color.Error">
-                                <ValidationSummary/>
-                            </MudText>
-                        }
-                    </MudPaper>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudText Typo="Typo.body2" Align="Align.Center">
-                        Fill out the form correctly to see the success message.
+            <MudCard>
+                <MudCardContent>
+                    <MudTextField Label="Title" HelperText="Min. 8 characters"
+                                  @bind-Value="model.Title" For="@(() => model.Title)"/>
+                    <MudTextField Lines="10" AutoGrow MaxLines="100" Label="Content" Class="mt-3" HelperText="Min. 8 characters"
+                                  @bind-Value="model.Content" For="@(() => model.Content)"/>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add</MudButton>
+                </MudCardActions>
+            </MudCard>
+            <MudPaper Class="pa-4 mud-height-full">
+                <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
+                @if (!success)
+                {
+                    <MudText Color="@Color.Error">
+                        <ValidationSummary/>
                     </MudText>
-                </MudItem>
-            </MudGrid>
+                }
+            </MudPaper>
         </EditForm>
     </AuthorizeView>
 
@@ -57,6 +47,7 @@
         {
             await BloggerApiService.CreateBlog(model);
             success = true;
+            Snackbar.Add("Blog added", Severity.Success);
 
             StateHasChanged();
             NavigationManager.NavigateTo("/");

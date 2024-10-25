@@ -1,5 +1,7 @@
 using Blogger.Contracts.Enums;
 using Blogger.Contracts.Models;
+using Blogger.Contracts.Models.Requests;
+using Blogger.Contracts.Models.Responses;
 using Blogger.Contracts.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +15,23 @@ public class BlogsController(ILogger<BlogsController> logger, IBlogsService blog
 {
     [AllowAnonymous]
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] FilterBlogsRequest filterBlogsRequest)
     {
         try
         {
-            var blogs = await blogsService.GetBlogsAsync(e => e.EntityStatus == EntityStatus.Active);
-            return Ok(blogs);
+            var blogs = await blogsService.GetBlogsAsync(e => e.EntityStatus == EntityStatus.Active,
+                (filterBlogsRequest.Page - 1) * filterBlogsRequest.PageSize, filterBlogsRequest.PageSize);
+            var filterResult = new FilterBlogsResult
+            {
+                Blogs = blogs,
+                Page = filterBlogsRequest.Page,
+                PageSize = filterBlogsRequest.PageSize,
+                TotalCount = await blogsService.CountAsync(e => e.EntityStatus == EntityStatus.Active),
+                ShowPrevious = filterBlogsRequest.Page > 1,
+                ShowNext = blogs.Count() == filterBlogsRequest.PageSize
+            };
+
+            return Ok(filterResult);
         }
         catch (Exception ex)
         {

@@ -9,20 +9,16 @@
 
 
 <MudContainer MaxWidth="MaxWidth.Medium">
-    <MudPaper Height="100%" Width="100%" Square="true" Class="pa-3" Elevation="0">
-
-        @{
-            if (Blog == null)
-            {
-                <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
-            }
-            else
-            {
-                <BlogDetailed Blog="Blog"></BlogDetailed>
-            }
+    @{
+        if (Blog == null)
+        {
+            <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
         }
-
-    </MudPaper>
+        else
+        {
+            <BlogDetailed Blog="Blog"></BlogDetailed>
+        }
+    }
 </MudContainer>
 
 
