@@ -1,0 +1,72 @@
+@page "/add"
+@using Blogger.App.ApiServices
+@using Blogger.Contracts.Models
+@using Microsoft.AspNetCore.Authorization
+
+@inject IBloggerApiService BloggerApiService
+@inject NavigationManager NavigationManager
+
+@attribute [Authorize]
+
+<PageTitle>Add blog</PageTitle>
+
+<MudPaper Class="pa-3" Elevation="0">
+
+    <AuthorizeView Context="authContext">
+        <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator/>
+            <MudGrid>
+                <MudItem xs="12" sm="7">
+                    <MudCard>
+                        <MudCardContent>
+                            <MudTextField Label="Title" HelperText="Min. 8 characters"
+                                          @bind-Value="model.Title" For="@(() => model.Title)"/>
+                            <MudTextField Lines="10" Label="Content" Class="mt-3" HelperText="Min. 8 characters"
+                                          @bind-Value="model.Content" For="@(() => model.Content)"/>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Add</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+                <MudItem xs="12" sm="5">
+                    <MudPaper Class="pa-4 mud-height-full">
+                        <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
+                        @if (!success)
+                        {
+                            <MudText Color="@Color.Error">
+                                <ValidationSummary/>
+                            </MudText>
+                        }
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.body2" Align="Align.Center">
+                        Fill out the form correctly to see the success message.
+                    </MudText>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+    </AuthorizeView>
+
+    @code {
+        readonly BlogDTO model = new();
+        bool success;
+
+        private async Task OnValidSubmit(EditContext context)
+        {
+            await BloggerApiService.CreateBlog(model);
+            success = true;
+
+            StateHasChanged();
+            NavigationManager.NavigateTo("/");
+        }
+
+    }
+
+</MudPaper>
+
+
+@code {
+    [Parameter] public BlogDTO Blog { get; set; }
+}

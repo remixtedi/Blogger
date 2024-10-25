@@ -1,0 +1,120 @@
+@page "/edit/{id:int}"
+@using Blogger.App.ApiServices
+@using Blogger.App.Components.Account.Shared
+@using Blogger.Contracts.Models
+@using Microsoft.AspNetCore.Authorization
+
+@inject IBloggerApiService BloggerApiService
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+@attribute [Authorize]
+
+<PageTitle>Edit blog</PageTitle>
+
+<MudPaper Class="pa-3" Elevation="0">
+
+    <AuthorizeView Context="authContext">
+
+        @if (Blog == null)
+        {
+            <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
+        }
+        else
+        {
+            <EditForm Model="@Blog" OnValidSubmit="OnValidSubmit">
+                <DataAnnotationsValidator/>
+                <MudGrid>
+                    <MudItem xs="12" sm="7">
+                        <MudCard>
+                            <MudCardContent>
+                                <MudTextField Label="Title" HelperText="Min. 8 characters"
+                                              @bind-Value="Blog.Title" For="@(() => Blog.Title)"/>
+                                <MudTextField Lines="10" Label="Content" Class="mt-3" HelperText="Min. 8 characters"
+                                              @bind-Value="Blog.Content" For="@(() => Blog.Content)"/>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Edit</MudButton>
+                                <MudButton @onclick="DeleteBlogAsync" Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                    <MudItem xs="12" sm="5">
+                        <MudPaper Class="pa-4 mud-height-full">
+                            <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
+                            @if (!success)
+                            {
+                                <MudText Color="@Color.Error">
+                                    <ValidationSummary/>
+                                </MudText>
+                            }
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.body2" Align="Align.Center">
+                            Fill out the form correctly to see the success message.
+                        </MudText>
+                    </MudItem>
+                </MudGrid>
+            </EditForm>
+        }
+
+    </AuthorizeView>
+
+    @code {
+        [Parameter] public int Id { get; set; }
+        private BlogDTO Blog { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            Blog = await BloggerApiService.GetBlogById(Id);
+        }
+
+        bool success;
+
+        private async Task OnValidSubmit(EditContext context)
+        {
+            await BloggerApiService.UpdateBlog(Id, Blog);
+            success = true;
+
+            StateHasChanged();
+            NavigationManager.NavigateTo("/");
+        }
+        
+        private async Task DeleteBlogAsync()
+        {
+            var parameters = new DialogParameters<SimpleDialog>
+            {
+                { x => x.ContentText, "Are you sure you want to delete this blog?" },
+                { x => x.ButtonText, "Delete" },
+                { x => x.Color, Color.Error }
+            };
+            
+            var options = new DialogOptions() 
+            { 
+                CloseButton = true, 
+                MaxWidth = MaxWidth.ExtraSmall,
+            };
+
+            try
+            {
+                var dialog = await DialogService.ShowAsync<SimpleDialog>("Delete", parameters, options);
+                var result = await dialog.Result;
+
+                if (!result.Canceled)
+                {
+                    await BloggerApiService.DeleteBlog(Id);
+                    NavigationManager.NavigateTo("/blogs");
+                    Snackbar.Add("Blog deleted successfully", Severity.Success);
+                }
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add("An unexpected error occurred", Severity.Error);
+            }
+        }
+      
+    }
+
+</MudPaper>

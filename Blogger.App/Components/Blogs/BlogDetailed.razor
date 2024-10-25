@@ -7,6 +7,9 @@
             <MudText Typo="Typo.body2">@Blog.Content</MudText>
             <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
         </MudCardContent>
+        <MudCardActions>
+            <MudButton Href="@($"/Edit/{Blog.Id}")" Variant="Variant.Text" Color="Color.Primary">Edit</MudButton>
+        </MudCardActions>
     </MudCard>
 </MudPaper>
 

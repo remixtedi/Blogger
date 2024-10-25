@@ -16,7 +16,7 @@ public class BlogsService(ILogger<BlogsService> logger, IMapper mapper, IUnitOfW
         logger.LogInformation("Retrieving all blogs");
         try
         {
-            var blogs = await unitOfWork.Blogs.GetAllAsync(predicate);
+            var blogs = await unitOfWork.Blogs.GetAllAsync(predicate, e => e.Created, true);
             logger.LogInformation("Retrieved all blogs");
             return blogs;
         }

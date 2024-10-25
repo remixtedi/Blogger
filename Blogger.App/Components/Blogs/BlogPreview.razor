@@ -7,7 +7,7 @@
             <MudText Typo="Typo.body2">@(Blog.Content.Length > 300 ? $"{Blog.Content.Substring(0, 300)}..." : Blog.Content)</MudText>
         </MudCardContent>
         <MudCardActions>
-            <MudButton Href="@($"/BlogDetails/{Blog.Id}")" Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+            <MudButton Href="@($"/BlogDetails/{Blog.Id}")" Variant="Variant.Text" Color="Color.Primary">See details</MudButton>
         </MudCardActions>
     </MudCard>
 </MudPaper>

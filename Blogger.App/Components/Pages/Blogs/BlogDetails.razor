@@ -1,4 +1,4 @@
-@page "/BlogDetails/{BlogId:int}"
+@page "/BlogDetails/{Id:int}"
 @using Blogger.App.ApiServices
 @using Blogger.App.Components.Blogs
 @using Blogger.Contracts.Models
@@ -27,12 +27,12 @@
 
 
 @code {
-    [Parameter] public int BlogId { get; set; }
+    [Parameter] public int Id { get; set; }
     private BlogDTO Blog { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Blog = await BloggerApiService.GetBlogById(BlogId);
+        Blog = await BloggerApiService.GetBlogById(Id);
     }
 
 }
