@@ -18,17 +18,24 @@
             }
             else
             {
-                <MudStack Spacing="10">
-                    @foreach (var blog in filterBlogsResult.Blogs)
-                    {
-                        <BlogPreview Blog="blog"></BlogPreview>
-                    }
-                </MudStack>
-                <MudPaper Class="mt-4" Elevation="0">
-                    <div class="d-flex flex-column align-center">
-                        <MudPagination SelectedChanged="PageChanged" Color="Color.Primary" Count="@((filterBlogsResult.TotalCount + filterBlogsResult.PageSize - 1) / filterBlogsResult.PageSize)"/>
-                    </div>
-                </MudPaper>
+                if (filterBlogsResult.Blogs.Any())
+                {
+                    <MudStack Spacing="10">
+                        @foreach (var blog in filterBlogsResult.Blogs)
+                        {
+                            <BlogPreview Blog="blog"></BlogPreview>
+                        }
+                    </MudStack>
+                    <MudPaper Class="mt-4" Elevation="0">
+                        <div class="d-flex flex-column align-center">
+                            <MudPagination SelectedChanged="PageChanged" Color="Color.Primary" Count="@((filterBlogsResult.TotalCount + filterBlogsResult.PageSize - 1) / filterBlogsResult.PageSize)"/>
+                        </div>
+                    </MudPaper>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6">No blogs found, click <MudLink Href="/add">here</MudLink> to add a new blog.</MudText>
+                }
             }
         }
 
