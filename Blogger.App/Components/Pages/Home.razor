@@ -11,6 +11,10 @@
 <MudContainer MaxWidth="MaxWidth.Medium">
     <MudPaper Height="100%" Width="100%" Square="true" Class="pa-3" Elevation="0">
 
+        <MudPaper Class="pb-4" Elevation="0">
+            <MudTextField OnAdornmentClick="SearchBlogs" OnBlur="SearchBlogs" @bind-Value="SearchText" Label="Search" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        </MudPaper>
+        
         @{
             if (filterBlogsResult == null)
             {
@@ -47,28 +51,35 @@
     private FilterBlogsResult? filterBlogsResult;
     private int _page = 1;
     private readonly int _pageSize = 3;
+    private string SearchText = "";
 
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
     }
-
-    private async Task LoadData()
+    
+    private async Task PageChanged(int i)
+    {
+        _page = i;
+        await LoadData();
+    }
+    private async Task LoadData(string? keywords = null)
     {
         var filter = new FilterBlogsRequest
         {
             Page = _page,
-            PageSize = _pageSize
+            PageSize = _pageSize,
+            Keyword = keywords
         };
 
         filterBlogsResult = await BloggerApiService.GetBlogs(filter);
         _page = filterBlogsResult.Page;
     }
 
-    private async Task PageChanged(int i)
+    private async Task SearchBlogs()
     {
-        _page = i;
-        await LoadData();
+        Console.WriteLine(SearchText);
+        await LoadData(SearchText);
     }
 
 }

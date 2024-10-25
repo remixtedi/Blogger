@@ -1,8 +1,11 @@
+using System.Linq.Expressions;
+using Blogger.Contracts.Data.Entities;
 using Blogger.Contracts.Enums;
 using Blogger.Contracts.Models;
 using Blogger.Contracts.Models.Requests;
 using Blogger.Contracts.Models.Responses;
 using Blogger.Contracts.Services;
+using Blogger.Core.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,14 +22,21 @@ public class BlogsController(ILogger<BlogsController> logger, IBlogsService blog
     {
         try
         {
-            var blogs = await blogsService.GetBlogsAsync(e => e.EntityStatus == EntityStatus.Active,
+            Expression<Func<Blog, bool>> filter = e => e.EntityStatus == EntityStatus.Active;
+            
+            if (!string.IsNullOrWhiteSpace(filterBlogsRequest.Keyword))
+            {
+                filter = filter.And(e => e.Title.Contains(filterBlogsRequest.Keyword) || e.Content.Contains(filterBlogsRequest.Keyword));
+            }
+            
+            var blogs = await blogsService.GetBlogsAsync(filter,
                 (filterBlogsRequest.Page - 1) * filterBlogsRequest.PageSize, filterBlogsRequest.PageSize);
             var filterResult = new FilterBlogsResult
             {
                 Blogs = blogs,
                 Page = filterBlogsRequest.Page,
                 PageSize = filterBlogsRequest.PageSize,
-                TotalCount = await blogsService.CountAsync(e => e.EntityStatus == EntityStatus.Active),
+                TotalCount = await blogsService.CountAsync(filter),
                 ShowPrevious = filterBlogsRequest.Page > 1,
                 ShowNext = blogs.Count() == filterBlogsRequest.PageSize
             };
