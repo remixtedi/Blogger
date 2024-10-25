@@ -20,10 +20,39 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+#region Database Configuration
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+
+// Convert the relative path to absolute and normalize for the current OS
+var dbPath = connectionString!
+    .Replace("DataSource=", "", StringComparison.OrdinalIgnoreCase)
+    .Split(';')[0]; // Get just the path part
+
+// Convert to absolute path
+if (!Path.IsPathRooted(dbPath))
+{
+    dbPath = Path.GetFullPath(
+        Path.Combine(builder.Environment.ContentRootPath, dbPath));
+}
+
+// Ensure the directory exists
+var dbDirectory = Path.GetDirectoryName(dbPath);
+if (!Directory.Exists(dbDirectory))
+{
+    Directory.CreateDirectory(dbDirectory!);
+}
+
+// Create new connection string with normalized path
+var normalizedConnectionString = connectionString.Replace(
+    connectionString.Split(';')[0], 
+    $"DataSource={dbPath}");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseSqlite(normalizedConnectionString));
+
+#endregion Database Configuration
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
@@ -99,7 +128,7 @@ builder.Services.AddAutoMapper(automappper =>
 
 var app = builder.Build();
 
-// Run migrations
+// Ensure database is created and migrated
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
