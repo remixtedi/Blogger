@@ -23,12 +23,12 @@ public class BlogsController(ILogger<BlogsController> logger, IBlogsService blog
         try
         {
             Expression<Func<Blog, bool>> filter = e => e.EntityStatus == EntityStatus.Active;
-            
+
             if (!string.IsNullOrWhiteSpace(filterBlogsRequest.Keyword))
-            {
-                filter = filter.And(e => e.Title.Contains(filterBlogsRequest.Keyword) || e.Content.Contains(filterBlogsRequest.Keyword));
-            }
-            
+                filter = filter.And(e =>
+                    e.Title.Contains(filterBlogsRequest.Keyword, StringComparison.InvariantCultureIgnoreCase) ||
+                    e.Content.Contains(filterBlogsRequest.Keyword, StringComparison.InvariantCultureIgnoreCase));
+
             var blogs = await blogsService.GetBlogsAsync(filter,
                 (filterBlogsRequest.Page - 1) * filterBlogsRequest.PageSize, filterBlogsRequest.PageSize);
             var filterResult = new FilterBlogsResult
