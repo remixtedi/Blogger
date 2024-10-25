@@ -26,8 +26,8 @@ public class BlogsController(ILogger<BlogsController> logger, IBlogsService blog
 
             if (!string.IsNullOrWhiteSpace(filterBlogsRequest.Keyword))
                 filter = filter.And(e =>
-                    e.Title.Contains(filterBlogsRequest.Keyword, StringComparison.InvariantCultureIgnoreCase) ||
-                    e.Content.Contains(filterBlogsRequest.Keyword, StringComparison.InvariantCultureIgnoreCase));
+                    e.Title.ToLower().Contains(filterBlogsRequest.Keyword.ToLower()) ||
+                    e.Content.ToLower().Contains(filterBlogsRequest.Keyword.ToLower()));
 
             var blogs = await blogsService.GetBlogsAsync(filter,
                 (filterBlogsRequest.Page - 1) * filterBlogsRequest.PageSize, filterBlogsRequest.PageSize);
